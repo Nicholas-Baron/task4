@@ -26,6 +26,11 @@ class TaskRepository private constructor(context: Context) {
 
     fun getTasksWithSubtasks(): LiveData<List<TaskWithSubTasks>> = taskDAO.getTasksWithSubtasks()
 
+    fun getTasks(): LiveData<List<Task>> = taskDAO.getTasks()
+
+    fun getTaskWithSubtasks(uuid: UUID): LiveData<TaskWithSubTasks?> =
+        taskDAO.getTaskWithSubtasks(uuid)
+
     fun getTask(uuid: UUID): LiveData<Task?> = taskDAO.getTask(uuid)
 
     fun update(task: Task) {

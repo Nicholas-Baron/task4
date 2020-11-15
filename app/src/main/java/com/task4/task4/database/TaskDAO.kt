@@ -11,6 +11,13 @@ interface TaskDAO {
     @Query("SELECT * FROM Task")
     fun getTasksWithSubtasks(): LiveData<List<TaskWithSubTasks>>
 
+    @Query("SELECT * FROM Task")
+    fun getTasks(): LiveData<List<Task>>
+
+    @Transaction
+    @Query("SELECT * FROM Task WHERE id=(:id)")
+    fun getTaskWithSubtasks(id: UUID): LiveData<TaskWithSubTasks?>
+
     @Query("SELECT * FROM Task WHERE id=(:id)")
     fun getTask(id: UUID): LiveData<Task?>
 
