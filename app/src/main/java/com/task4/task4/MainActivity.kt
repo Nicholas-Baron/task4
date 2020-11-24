@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity(), TaskListFragment.Callbacks {
                 .commit()
         }
     }
-    override fun onTaskSelected(crimeId: UUID) {
-
+    override fun onTaskSelected(taskId: UUID) {
+        val fragment = TaskDetailFragment.newInstance(taskId)
+        TODO("Blocked by pull request on taskView")
     }
 }
