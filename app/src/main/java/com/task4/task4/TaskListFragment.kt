@@ -35,8 +35,10 @@ class TaskListFragment : Fragment() {
 
         fun bind(task: Task) {
             this.task = task
-            titleTextView.text = this.task.name
-            dateTextView.text = DateFormat.getDateInstance().format(this.task.dueDate)
+            this.task.apply {
+                titleTextView.text = name
+                dateTextView.text = userDate
+            }
         }
 
         init {
@@ -55,20 +57,15 @@ class TaskListFragment : Fragment() {
 
     private var callbacks: Callbacks? = null
 
-
     private inner class TaskAdapter(var tasks: List<Task>) : RecyclerView.Adapter<TaskHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
-            val view = layoutInflater.inflate(R.layout.list_item_task, parent, false)
-            return TaskHolder(view)
-        }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder =
+            layoutInflater.inflate(R.layout.list_item_task, parent, false).let { TaskHolder(it) }
 
         override fun getItemCount() = tasks.size
 
         override fun onBindViewHolder(holder: TaskHolder, position: Int) {
-            val task = tasks[position]
-
-            holder.bind(task)
+            holder.bind(tasks[position])
         }
 
     }
@@ -82,7 +79,7 @@ class TaskListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_task_list, container, false)
-        taskRecyclerView = view.findViewById(R.id.task_recycler_view) as RecyclerView
+        taskRecyclerView = view.findViewById(R.id.task_recycler_view)
 
         taskRecyclerView.layoutManager = LinearLayoutManager(context)
         taskRecyclerView.adapter = adapter
@@ -134,8 +131,6 @@ class TaskListFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(): TaskListFragment {
-            return TaskListFragment()
-        }
+        fun newInstance() = TaskListFragment()
     }
 }

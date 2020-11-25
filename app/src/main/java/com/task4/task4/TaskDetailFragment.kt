@@ -93,19 +93,21 @@ class TaskDetailFragment : Fragment() {
         taskDetailViewModel.saveTask(task)
     }
 
-    //TODO: correctly set due date and due time in UI
     private fun updateUI() {
-        titleField.setText(task.name)
-        dateButton.text = task.dueDate.toString()
-        taskCompleted.apply {
-            isChecked = task.completed
-            jumpDrawablesToCurrentState()
+        task.apply {
+            titleField.setText(name)
+            dateButton.text = userDate
+            timeButton.text = userTime
+            taskCompleted.apply {
+                isChecked = completed
+                jumpDrawablesToCurrentState()
+            }
         }
-        timeButton.text = task.dueDate.toString()
     }
 
     companion object {
-        fun newInstance(taskId : UUID) = TaskDetailFragment().apply {
+
+        fun newInstance(taskId: UUID) = TaskDetailFragment().apply {
             arguments = bundleOf(ARG_TASK_ID to taskId)
         }
     }

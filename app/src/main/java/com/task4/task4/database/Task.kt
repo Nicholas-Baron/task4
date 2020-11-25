@@ -1,6 +1,7 @@
 package com.task4.task4.database
 
 import androidx.room.*
+import java.text.DateFormat
 import java.util.Date
 import java.util.UUID
 
@@ -10,7 +11,14 @@ data class Task(
     var name: String = "",
     var completed: Boolean = false,
     var dueDate: Date = Date(),
-)
+) {
+
+    val userDate: String
+        get() = DateFormat.getDateInstance(DateFormat.MEDIUM).format(dueDate)
+
+    val userTime: String
+        get() = DateFormat.getTimeInstance(DateFormat.SHORT).format(dueDate)
+}
 
 @Entity(
     indices = [Index("parentId"), Index("childId")],
