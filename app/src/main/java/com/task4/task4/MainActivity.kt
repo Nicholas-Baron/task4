@@ -1,3 +1,5 @@
+@file:Suppress("unused", "unused")
+
 package com.task4.task4
 
 import androidx.appcompat.app.AppCompatActivity

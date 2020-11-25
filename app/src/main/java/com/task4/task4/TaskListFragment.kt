@@ -64,8 +64,9 @@ class TaskListFragment : Fragment() {
 
     private inner class TaskAdapter(var tasks: List<Task>) : RecyclerView.Adapter<TaskHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder =
-            layoutInflater.inflate(R.layout.list_item_task, parent, false).let { TaskHolder(it) }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder = TaskHolder(
+            layoutInflater.inflate(R.layout.list_item_task, parent, false)
+        )
 
         override fun getItemCount() = tasks.size
 
