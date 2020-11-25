@@ -4,14 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
-import java.text.DateFormat
-import java.util.*
+import java.util.UUID
 
 private const val TAG = "TaskListFragment"
 
@@ -32,12 +32,17 @@ class TaskListFragment : Fragment() {
         private lateinit var task: Task
         private val titleTextView: TextView = itemView.findViewById(R.id.task_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.task_due_date)
+        private val doneCheckBox: CheckBox = itemView.findViewById(R.id.task_completed)
 
         fun bind(task: Task) {
             this.task = task
             this.task.apply {
                 titleTextView.text = name
                 dateTextView.text = userDate
+                doneCheckBox.apply {
+                    isChecked = completed
+                    jumpDrawablesToCurrentState()
+                }
             }
         }
 
