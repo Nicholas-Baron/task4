@@ -106,10 +106,26 @@ class TaskListFragment : Fragment() {
         callbacks = null
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_task_list, menu)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.new_task -> {
+            val task = Task()
+            taskListViewModel.addTask(task)
+            callbacks?.onTaskSelected(task.id)
+            true
+        }
+        else          -> super.onOptionsItemSelected(item)
+    }
+
 
     private fun updateUI(tasks: List<Task>) {
         adapter = TaskAdapter(tasks)
