@@ -11,13 +11,13 @@
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title" />
+        android:text="@string/task_title" />
 
     <EditText
         android:id="@+id/task_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter a title for the task"
+        android:hint="@string/title_hint"
         android:importantForAutofill="no"
         android:inputType="textCapWords" />
 
@@ -54,6 +54,6 @@
         android:id="@+id/task_completed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Done" />
+        android:text="@string/done" />
 
 </LinearLayout>
