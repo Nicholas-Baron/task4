@@ -12,7 +12,15 @@ data class Task(
     var dueDate: Date = Date(),
 )
 
-@Entity(primaryKeys = ["parentId", "childId"])
+@Entity(
+    indices = [Index("parentId"), Index("childId")],
+    primaryKeys = ["parentId", "childId"],
+    foreignKeys = [ForeignKey(
+        entity = Task::class, parentColumns = ["id"], childColumns = ["parentId"]
+    ), ForeignKey(
+        entity = Task::class, parentColumns = ["id"], childColumns = ["childId"]
+    )]
+)
 data class TaskCrossRef(
     val parentId: UUID,
     val childId: UUID,
@@ -20,8 +28,8 @@ data class TaskCrossRef(
 
 data class TaskWithSubTasks(
     @Embedded val parent: Task, @Relation(
-        parentColumn = "parentId",
-        entityColumn = "childId",
-        associateBy = Junction(TaskCrossRef::class)
+        parentColumn = "id", entityColumn = "id", associateBy = Junction(
+            value = TaskCrossRef::class, parentColumn = "parentId", entityColumn = "childId"
+        )
     ) val subTasks: List<Task>
 )
