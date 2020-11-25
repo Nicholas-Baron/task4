@@ -13,11 +13,16 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.task4.task4.database.Task
+import com.task4.task4.dialogs.DatePickerFragment
+import java.util.Date
 import java.util.UUID
 
 private const val ARG_TASK_ID = "task_id"
 
-class TaskDetailFragment : Fragment() {
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
+
+class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks {
 
     private lateinit var task: Task
     private lateinit var titleField: EditText
@@ -80,7 +85,10 @@ class TaskDetailFragment : Fragment() {
         }
 
         dateButton.setOnClickListener {
-            //TODO: get date from user
+            DatePickerFragment.newInstance(task.dueDate).apply {
+                setTargetFragment(this@TaskDetailFragment, REQUEST_DATE)
+                show(this@TaskDetailFragment.parentFragmentManager, DIALOG_DATE)
+            }
         }
 
         timeButton.setOnClickListener {
@@ -110,6 +118,11 @@ class TaskDetailFragment : Fragment() {
         fun newInstance(taskId: UUID) = TaskDetailFragment().apply {
             arguments = bundleOf(ARG_TASK_ID to taskId)
         }
+    }
+
+    override fun onDateSelected(date: Date) {
+        task.dueDate = date
+        updateUI()
     }
 
 
