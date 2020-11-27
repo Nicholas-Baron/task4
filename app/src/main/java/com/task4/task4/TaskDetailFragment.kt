@@ -13,11 +13,20 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.task4.task4.database.Task
+import com.task4.task4.dialogs.DatePickerFragment
+import com.task4.task4.dialogs.TimePickerFragment
+import java.util.Date
 import java.util.UUID
 
 private const val ARG_TASK_ID = "task_id"
 
-class TaskDetailFragment : Fragment() {
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
+
+private const val DIALOG_TIME = "DialogTime"
+private const val REQUEST_TIME = 1
+
+class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
 
     private lateinit var task: Task
     private lateinit var titleField: EditText
@@ -80,11 +89,17 @@ class TaskDetailFragment : Fragment() {
         }
 
         dateButton.setOnClickListener {
-            //TODO: get date from user
+            DatePickerFragment.newInstance(task.dueDate).apply {
+                setTargetFragment(this@TaskDetailFragment, REQUEST_DATE)
+                show(this@TaskDetailFragment.parentFragmentManager, DIALOG_DATE)
+            }
         }
 
         timeButton.setOnClickListener {
-            //TODO: get date from user
+            TimePickerFragment.newInstance(task.dueDate).apply {
+                setTargetFragment(this@TaskDetailFragment, REQUEST_TIME)
+                show(this@TaskDetailFragment.parentFragmentManager, DIALOG_TIME)
+            }
         }
     }
 
@@ -93,21 +108,33 @@ class TaskDetailFragment : Fragment() {
         taskDetailViewModel.saveTask(task)
     }
 
-    //TODO: correctly set due date and due time in UI
     private fun updateUI() {
-        titleField.setText(task.name)
-        dateButton.text = task.dueDate.toString()
-        taskCompleted.apply {
-            isChecked = task.completed
-            jumpDrawablesToCurrentState()
+        task.apply {
+            titleField.setText(name)
+            dateButton.text = userDate
+            timeButton.text = userTime
+            taskCompleted.apply {
+                isChecked = completed
+                jumpDrawablesToCurrentState()
+            }
         }
-        timeButton.text = task.dueDate.toString()
     }
 
     companion object {
-        fun newInstance(taskId : UUID) = TaskDetailFragment().apply {
+
+        fun newInstance(taskId: UUID) = TaskDetailFragment().apply {
             arguments = bundleOf(ARG_TASK_ID to taskId)
         }
+    }
+
+    override fun onDateSelected(date: Date) {
+        task.dueDate = date
+        updateUI()
+    }
+
+    override fun onTimeSelected(time: Date) {
+        task.dueDate = time
+        updateUI()
     }
 
 

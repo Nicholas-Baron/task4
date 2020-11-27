@@ -1,3 +1,5 @@
+@file:Suppress("RedundantNullableReturnType")
+
 package com.task4.task4.database
 
 import androidx.room.TypeConverter

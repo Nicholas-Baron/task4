@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Task 4</string>
+    <string name="done">Done</string>
     <string name="new_task">New Task</string>
+    <string name="task_due_date">Task Due Date</string>
+    <string name="task_title">Task Title</string>
+    <string name="title_hint">Enter a title for the task</string>
 </resources>

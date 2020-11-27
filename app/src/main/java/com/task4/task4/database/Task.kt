@@ -1,6 +1,7 @@
 package com.task4.task4.database
 
 import androidx.room.*
+import java.text.DateFormat
 import java.util.Date
 import java.util.UUID
 
@@ -10,9 +11,24 @@ data class Task(
     var name: String = "",
     var completed: Boolean = false,
     var dueDate: Date = Date(),
-)
+) {
 
-@Entity(primaryKeys = ["parentId", "childId"])
+    val userDate: String
+        get() = DateFormat.getDateInstance(DateFormat.MEDIUM).format(dueDate)
+
+    val userTime: String
+        get() = DateFormat.getTimeInstance(DateFormat.SHORT).format(dueDate)
+}
+
+@Entity(
+    indices = [Index("parentId"), Index("childId")],
+    primaryKeys = ["parentId", "childId"],
+    foreignKeys = [ForeignKey(
+        entity = Task::class, parentColumns = ["id"], childColumns = ["parentId"]
+    ), ForeignKey(
+        entity = Task::class, parentColumns = ["id"], childColumns = ["childId"]
+    )]
+)
 data class TaskCrossRef(
     val parentId: UUID,
     val childId: UUID,
@@ -20,8 +36,8 @@ data class TaskCrossRef(
 
 data class TaskWithSubTasks(
     @Embedded val parent: Task, @Relation(
-        parentColumn = "parentId",
-        entityColumn = "childId",
-        associateBy = Junction(TaskCrossRef::class)
+        parentColumn = "id", entityColumn = "id", associateBy = Junction(
+            value = TaskCrossRef::class, parentColumn = "parentId", entityColumn = "childId"
+        )
     ) val subTasks: List<Task>
 )
