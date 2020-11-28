@@ -39,6 +39,16 @@ class TaskRepository private constructor(context: Context) {
         executor.execute { taskDAO.updateTask(task) }
     }
 
+    fun linkTasks(parent: Task, subtask: Task) {
+        executor.execute {
+            taskDAO.insertCrossRef(
+                TaskCrossRef(
+                    parentId = parent.id, childId = subtask.id
+                )
+            )
+        }
+    }
+
     companion object {
 
         private var INSTANCE: TaskRepository? = null

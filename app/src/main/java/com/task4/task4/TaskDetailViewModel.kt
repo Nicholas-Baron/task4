@@ -27,4 +27,8 @@ class TaskDetailViewModel : ViewModel() {
         for (subTask in task.subTasks) taskRepository.update(subTask)
     }
 
+    fun addSubtask(parent: Task, subtask: Task) {
+        taskRepository.createTask(subtask)
+        taskRepository.linkTasks(parent, subtask)
+    }
 }

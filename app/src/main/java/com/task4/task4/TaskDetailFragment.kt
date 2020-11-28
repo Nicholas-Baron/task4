@@ -1,5 +1,6 @@
 package com.task4.task4
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskWithSubTasks
@@ -42,6 +44,14 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     private lateinit var addSubtaskButton: ImageButton
     private lateinit var subtaskRecyclerView: RecyclerView
 
+    private var subTaskAdapter = TaskAdapter(emptyList(), null)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        subTaskAdapter.layoutInflater = layoutInflater
+        subTaskAdapter.callbacks = context as TaskRecylerViewCallbacks?
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         task = TaskWithSubTasks(parent = Task(), subTasks = emptyList())
@@ -60,6 +70,10 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
             taskCompleted = findViewById(R.id.task_completed)
             addSubtaskButton = findViewById(R.id.add_subtask)
             subtaskRecyclerView = findViewById(R.id.task_subtask_list)
+            subtaskRecyclerView.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = subTaskAdapter
+            }
         }
         return view
     }
@@ -111,7 +125,9 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
         }
 
         addSubtaskButton.setOnClickListener {
-
+            val task = Task()
+            taskDetailViewModel.addSubtask(parent = this.task.parent, subtask = task)
+            subTaskAdapter.callbacks?.onTaskSelected(task.id)
         }
     }
 
@@ -130,6 +146,8 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
                 jumpDrawablesToCurrentState()
             }
         }
+        subTaskAdapter.tasks = task.subTasks
+        subtaskRecyclerView.adapter = subTaskAdapter
     }
 
     companion object {

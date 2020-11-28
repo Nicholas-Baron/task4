@@ -26,4 +26,7 @@ interface TaskDAO {
 
     @Insert
     fun createTask(task: Task)
+
+    @Insert
+    fun insertCrossRef(crossRef: TaskCrossRef)
 }
