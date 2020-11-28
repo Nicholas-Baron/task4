@@ -8,7 +8,7 @@ import java.util.UUID
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(), TaskListFragment.Callbacks {
+class MainActivity : AppCompatActivity(), TaskRecylerViewCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
