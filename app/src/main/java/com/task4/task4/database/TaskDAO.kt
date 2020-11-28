@@ -29,4 +29,7 @@ interface TaskDAO {
 
     @Insert
     fun insertCrossRef(crossRef: TaskCrossRef)
+
+    @Query("SELECT * FROM TaskCrossRef")
+    fun getCrossRefs(): LiveData<List<TaskCrossRef>>
 }
