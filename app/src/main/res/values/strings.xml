@@ -5,4 +5,6 @@
     <string name="task_due_date">Task Due Date</string>
     <string name="task_title">Task Title</string>
     <string name="title_hint">Enter a title for the task</string>
+    <string name="subtasks">SubTasks</string>
+    <string name="add_subtask">Add subtask</string>
 </resources>

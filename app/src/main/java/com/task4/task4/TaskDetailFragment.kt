@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
+import com.task4.task4.database.TaskWithSubTasks
 import com.task4.task4.dialogs.DatePickerFragment
 import com.task4.task4.dialogs.TimePickerFragment
 import java.util.Date
@@ -28,19 +31,22 @@ private const val REQUEST_TIME = 1
 
 class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerFragment.Callbacks {
 
-    private lateinit var task: Task
+    private lateinit var task: TaskWithSubTasks
+    private val taskDetailViewModel: TaskDetailViewModel by viewModels()
+
+    // GUI elements
     private lateinit var titleField: EditText
     private lateinit var dateButton: Button
     private lateinit var timeButton: Button
     private lateinit var taskCompleted: CheckBox
-    private val taskDetailViewModel: TaskDetailViewModel by viewModels()
+    private lateinit var addSubtaskButton: ImageButton
+    private lateinit var subtaskRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        task = Task()
+        task = TaskWithSubTasks(parent = Task(), subTasks = emptyList())
         val taskId = arguments?.getSerializable(ARG_TASK_ID) as UUID
         taskDetailViewModel.loadTask(taskId)
-
     }
 
     override fun onCreateView(
@@ -52,6 +58,8 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
             dateButton = findViewById(R.id.task_due_date)
             timeButton = findViewById(R.id.task_due_time)
             taskCompleted = findViewById(R.id.task_completed)
+            addSubtaskButton = findViewById(R.id.add_subtask)
+            subtaskRecyclerView = findViewById(R.id.task_subtask_list)
         }
         return view
     }
@@ -75,7 +83,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                task.name = s.toString()
+                task.parent.name = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -84,22 +92,26 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
 
         taskCompleted.apply {
             setOnCheckedChangeListener { _, isChecked ->
-                task.completed = isChecked
+                task.parent.completed = isChecked
             }
         }
 
         dateButton.setOnClickListener {
-            DatePickerFragment.newInstance(task.dueDate).apply {
+            DatePickerFragment.newInstance(task.parent.dueDate).apply {
                 setTargetFragment(this@TaskDetailFragment, REQUEST_DATE)
                 show(this@TaskDetailFragment.parentFragmentManager, DIALOG_DATE)
             }
         }
 
         timeButton.setOnClickListener {
-            TimePickerFragment.newInstance(task.dueDate).apply {
+            TimePickerFragment.newInstance(task.parent.dueDate).apply {
                 setTargetFragment(this@TaskDetailFragment, REQUEST_TIME)
                 show(this@TaskDetailFragment.parentFragmentManager, DIALOG_TIME)
             }
+        }
+
+        addSubtaskButton.setOnClickListener {
+
         }
     }
 
@@ -109,7 +121,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     }
 
     private fun updateUI() {
-        task.apply {
+        task.parent.apply {
             titleField.setText(name)
             dateButton.text = userDate
             timeButton.text = userTime
@@ -128,12 +140,12 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     }
 
     override fun onDateSelected(date: Date) {
-        task.dueDate = date
+        task.parent.dueDate = date
         updateUI()
     }
 
     override fun onTimeSelected(time: Date) {
-        task.dueDate = time
+        task.parent.dueDate = time
         updateUI()
     }
 

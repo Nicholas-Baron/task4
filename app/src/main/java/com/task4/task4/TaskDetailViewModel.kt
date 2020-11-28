@@ -6,21 +6,25 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskRepository
+import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
-class TaskDetailViewModel : ViewModel(){
+class TaskDetailViewModel : ViewModel() {
 
     private val taskRepository = TaskRepository.get()
     private val taskIdLiveData = MutableLiveData<UUID>()
-    var taskLiveData : LiveData<Task?> = Transformations.switchMap(taskIdLiveData) {
-        taskId -> taskRepository.getTask(taskId)
-    }
+    var taskLiveData: LiveData<TaskWithSubTasks?> =
+        Transformations.switchMap(taskIdLiveData) { taskId ->
+            taskRepository.getTaskWithSubtasks(taskId)
+        }
 
-    fun loadTask(taskId : UUID){
+    fun loadTask(taskId: UUID) {
         taskIdLiveData.value = taskId
     }
-    fun saveTask(task: Task){
-        taskRepository.update(task)
+
+    fun saveTask(task: TaskWithSubTasks) {
+        taskRepository.update(task.parent)
+        for (subTask in task.subTasks) taskRepository.update(subTask)
     }
 
 }
