@@ -3,7 +3,6 @@ package com.task4.task4.viewmodels
 import androidx.lifecycle.*
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskCrossRef
-import com.task4.task4.database.TaskRepository
 import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
@@ -34,14 +33,15 @@ class AddSubtaskViewModel : BaseViewModel() {
             while (toVisit.isNotEmpty()) {
                 val visiting = toVisit.removeAt(0)
                 val parents =
-                    crossRefs.filter { it.childId == visiting }.map { it.parentId }.toSet()
+                    crossRefs.filter { ref -> ref.childId == visiting }.map { ref -> ref.parentId }
+                        .toSet()
 
                 lineage.addAll(parents)
                 toVisit.addAll(parents)
             }
 
-            return@map allTasks.filter { it.parent.id !in lineage }
-                .map { taskRepository.getTaskWithSubtasks(it.parent.id) }
+            return@map allTasks.filter { task -> task.parent.id !in lineage }
+                .map { task -> taskRepository.getTaskWithSubtasks(task.parent.id) }
         }
 
     fun loadParentTask(taskId: UUID) {

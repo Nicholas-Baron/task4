@@ -27,7 +27,7 @@ data class TaskRecyclerViewSettings(
 }
 
 class TaskAdapter(
-    var tasks: List<LiveData<TaskWithSubTasks?>>, val settings: TaskRecyclerViewSettings
+    var tasks: List<LiveData<TaskWithSubTasks?>>, private val settings: TaskRecyclerViewSettings
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
@@ -63,7 +63,7 @@ interface TaskRecyclerViewCallbacks {
 }
 
 class TaskHolder(
-    view: View, val settings: TaskRecyclerViewSettings
+    view: View, private val settings: TaskRecyclerViewSettings
 ) : RecyclerView.ViewHolder(view), View.OnClickListener, Observer<TaskWithSubTasks?> {
 
     private lateinit var task: TaskWithSubTasks
