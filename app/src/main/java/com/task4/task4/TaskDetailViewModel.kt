@@ -1,9 +1,6 @@
 package com.task4.task4
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskRepository
 import com.task4.task4.database.TaskWithSubTasks
@@ -11,11 +8,24 @@ import java.util.UUID
 
 class TaskDetailViewModel : ViewModel() {
 
+
     private val taskRepository = TaskRepository.get()
     private val taskIdLiveData = MutableLiveData<UUID>()
-    var taskLiveData: LiveData<TaskWithSubTasks?> =
+    val taskLiveData: LiveData<TaskWithSubTasks?> =
         Transformations.switchMap(taskIdLiveData) { taskId ->
             taskRepository.getTaskWithSubtasks(taskId)
+        }
+
+    private val subTaskLiveData = taskRepository.getTasksWithSubtasks()
+
+    val liveSubTasksWithSubTasks: LiveData<List<TaskWithSubTasks>> =
+        Transformations.map(DoubleTrigger(taskLiveData, subTaskLiveData)) {
+            val directSubTasks = it.first?.subTasks ?: return@map emptyList()
+            val allTasksWithSubTasks = it.second ?: return@map emptyList()
+
+            val subTaskIds = directSubTasks.map { it.id }.toSet()
+
+            return@map allTasksWithSubTasks.filter { it.parent.id in subTaskIds }
         }
 
     fun loadTask(taskId: UUID) {
@@ -33,5 +43,14 @@ class TaskDetailViewModel : ViewModel() {
     fun addSubtask(parent: Task, subtask: Task) {
         taskRepository.createTask(subtask)
         taskRepository.linkTasks(parent.id, subtask.id)
+    }
+
+    private class DoubleTrigger<A, B>(a: LiveData<A>, b: LiveData<B>) :
+        MediatorLiveData<Pair<A?, B?>>() {
+
+        init {
+            addSource(a) { value = it to b.value }
+            addSource(b) { value = a.value to it }
+        }
     }
 }

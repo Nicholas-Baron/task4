@@ -4,6 +4,7 @@ package com.task4.task4.database
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.room.Room
 import java.util.UUID
 import java.util.concurrent.Executors
@@ -39,6 +40,13 @@ class TaskRepository private constructor(context: Context) {
 
     fun update(task: Task) {
         executor.execute { taskDAO.updateTask(task) }
+    }
+
+    fun update(task: TaskWithSubTasks) {
+        executor.execute {
+            taskDAO.updateTask(task.parent)
+            task.subTasks.forEach { taskDAO.updateTask(it) }
+        }
     }
 
     fun linkTasks(parent: UUID, subtask: UUID) {

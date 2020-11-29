@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
+import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
 data class TaskRecylerViewSettings(
@@ -24,7 +25,8 @@ data class TaskRecylerViewSettings(
 }
 
 class TaskAdapter(
-    var tasks: List<Task>, val settings: TaskRecylerViewSettings = TaskRecylerViewSettings()
+    var tasks: List<TaskWithSubTasks>,
+    val settings: TaskRecylerViewSettings = TaskRecylerViewSettings()
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
@@ -64,21 +66,21 @@ class TaskHolder(
     view: View, val settings: TaskRecylerViewSettings
 ) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-    private lateinit var task: Task
+    private lateinit var task: TaskWithSubTasks
     private val titleTextView: TextView = itemView.findViewById(R.id.task_title)
     private val dateTextView: TextView = itemView.findViewById(R.id.task_due_date)
     private val doneCheckBox: CheckBox = itemView.findViewById(R.id.task_completed)
 
-    fun bind(task: Task) {
+    fun bind(task: TaskWithSubTasks) {
         this.task = task
-        this.task.apply {
+        this.task.parent.apply {
             titleTextView.text = name
             dateTextView.text = userDate
             doneCheckBox.apply {
                 isChecked = completed
                 jumpDrawablesToCurrentState()
                 setOnCheckedChangeListener { _, isChecked ->
-                    this@TaskHolder.task.completed = isChecked
+                    this@TaskHolder.task.parent.completed = isChecked
                 }
                 isVisible = settings.showCheckBox
             }
@@ -90,6 +92,6 @@ class TaskHolder(
     }
 
     override fun onClick(v: View?) {
-        settings.triggerCallbacks(task.id)
+        settings.triggerCallbacks(task.parent.id)
     }
 }

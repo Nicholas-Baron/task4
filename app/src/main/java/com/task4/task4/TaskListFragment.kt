@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
+import com.task4.task4.database.TaskWithSubTasks
 
 private const val TAG = "TaskListFragment"
 
@@ -81,7 +82,7 @@ class TaskListFragment : Fragment() {
         taskListViewModel.saveTasks(adapter.tasks)
     }
 
-    private fun updateUI(tasks: List<Task>) {
+    private fun updateUI(tasks: List<TaskWithSubTasks>) {
         adapter.tasks = tasks
         taskRecyclerView.adapter = adapter
     }

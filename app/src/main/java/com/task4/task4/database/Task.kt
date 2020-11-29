@@ -40,4 +40,8 @@ data class TaskWithSubTasks(
             value = TaskCrossRef::class, parentColumn = "parentId", entityColumn = "childId"
         )
     ) val subTasks: List<Task>
-)
+) {
+
+    val canBeCompleted: Boolean
+        get() = subTasks.all { it.completed }
+}

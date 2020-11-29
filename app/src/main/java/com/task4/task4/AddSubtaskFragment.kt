@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
+import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
 private const val ARG_PARENT_ID = "parent_id"
@@ -30,7 +31,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
     private var existingTaskAdapter =
         TaskAdapter(emptyList(), TaskRecylerViewSettings(backMotion = true, showCheckBox = false))
 
-    private var possibleChildrenTasks: List<Task> = emptyList()
+    private var possibleChildrenTasks: List<TaskWithSubTasks> = emptyList()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

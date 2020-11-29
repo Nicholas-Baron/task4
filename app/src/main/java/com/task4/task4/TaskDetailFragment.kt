@@ -90,6 +90,12 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
                 updateUI()
             }
         }
+        taskDetailViewModel.liveSubTasksWithSubTasks.observe(viewLifecycleOwner) {
+            if (it != null) {
+                subTaskAdapter.tasks = it
+                subtaskRecyclerView.adapter = subTaskAdapter
+            }
+        }
     }
 
     override fun onStart() {
@@ -146,10 +152,9 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
             taskCompleted.apply {
                 isChecked = completed
                 jumpDrawablesToCurrentState()
+                isEnabled = task.canBeCompleted
             }
         }
-        subTaskAdapter.tasks = task.subTasks
-        subtaskRecyclerView.adapter = subTaskAdapter
     }
 
     companion object {

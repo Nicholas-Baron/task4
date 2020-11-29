@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskCrossRef
 import com.task4.task4.database.TaskRepository
+import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
 class AddSubtaskViewModel : ViewModel() {
@@ -17,9 +18,9 @@ class AddSubtaskViewModel : ViewModel() {
 
     var crossRefLiveData: LiveData<List<TaskCrossRef>> = taskRepository.getTaskCrossRefs()
 
-    var allTasks: LiveData<List<Task>> = taskRepository.getTasks()
+    var allTasks: LiveData<List<TaskWithSubTasks>> = taskRepository.getTasksWithSubtasks()
 
-    val possibleChildrenLiveData: LiveData<List<Task>> =
+    val possibleChildrenLiveData: LiveData<List<TaskWithSubTasks>> =
         Transformations.map(TripleTrigger(parentTaskIdLiveData, crossRefLiveData, allTasks)) {
             val crossRefs = it.second ?: return@map emptyList()
             val parentTaskId = it.first ?: return@map emptyList()
@@ -40,7 +41,7 @@ class AddSubtaskViewModel : ViewModel() {
                 toVisit.addAll(parents)
             }
 
-            return@map allTasks.filter { it.id !in lineage }
+            return@map allTasks.filter { it.parent.id !in lineage }
         }
 
 
