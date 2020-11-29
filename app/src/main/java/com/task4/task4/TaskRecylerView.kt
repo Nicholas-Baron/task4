@@ -52,6 +52,9 @@ class TaskHolder(
             doneCheckBox.apply {
                 isChecked = completed
                 jumpDrawablesToCurrentState()
+                setOnCheckedChangeListener { _, isChecked ->
+                    this@TaskHolder.task.completed = isChecked
+                }
             }
         }
     }

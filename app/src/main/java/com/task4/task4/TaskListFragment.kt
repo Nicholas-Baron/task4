@@ -77,6 +77,11 @@ class TaskListFragment : Fragment() {
         else          -> super.onOptionsItemSelected(item)
     }
 
+    override fun onStop() {
+        super.onStop()
+        taskListViewModel.saveTasks(adapter.tasks)
+    }
+
     private fun updateUI(tasks: List<Task>) {
         adapter.tasks = tasks
         taskRecyclerView.adapter = adapter
