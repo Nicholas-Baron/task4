@@ -24,11 +24,14 @@ class TaskDetailViewModel : ViewModel() {
 
     fun saveTask(task: TaskWithSubTasks) {
         taskRepository.update(task.parent)
-        for (subTask in task.subTasks) taskRepository.update(subTask)
+        for (subTask in task.subTasks) {
+            taskRepository.update(subTask)
+            taskRepository.linkTasks(task.parent.id, subTask.id)
+        }
     }
 
     fun addSubtask(parent: Task, subtask: Task) {
         taskRepository.createTask(subtask)
-        taskRepository.linkTasks(parent, subtask)
+        taskRepository.linkTasks(parent.id, subtask.id)
     }
 }

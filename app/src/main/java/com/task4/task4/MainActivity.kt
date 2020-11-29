@@ -8,7 +8,7 @@ import java.util.UUID
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(), TaskRecylerViewCallbacks {
+class MainActivity : AppCompatActivity(), TaskRecylerViewCallbacks, TaskDetailFragment.Callbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +25,18 @@ class MainActivity : AppCompatActivity(), TaskRecylerViewCallbacks {
         }
     }
 
-    override fun onTaskSelected(taskId: UUID) {
-        val fragment = TaskDetailFragment.newInstance(taskId)
+    override fun onTaskSelected(taskId: UUID, moveBack: Boolean) {
+        if (!moveBack) {
+            val fragment = TaskDetailFragment.newInstance(taskId)
+            supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                .addToBackStack(null).commit()
+        } else supportFragmentManager.popBackStackImmediate()
+    }
+
+    override fun onChildRequested(parent: UUID) {
+        val fragment = AddSubtaskFragment.newInstance(parent)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
             .addToBackStack(null).commit()
     }
+
 }

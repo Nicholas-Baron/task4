@@ -27,7 +27,7 @@ interface TaskDAO {
     @Insert
     fun createTask(task: Task)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCrossRef(crossRef: TaskCrossRef)
 
     @Query("SELECT * FROM TaskCrossRef")

@@ -10,14 +10,16 @@ import com.task4.task4.database.Task
 import java.util.UUID
 
 class TaskAdapter(
-    var tasks: List<Task>, var callbacks: TaskRecylerViewCallbacks? = null
+    var tasks: List<Task>,
+    var callbacks: MutableList<TaskRecylerViewCallbacks> = mutableListOf(),
+    val backMotion: Boolean = false
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
     lateinit var layoutInflater: LayoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder = TaskHolder(
-        layoutInflater.inflate(R.layout.list_item_task, parent, false), callbacks
+        layoutInflater.inflate(R.layout.list_item_task, parent, false), callbacks, backMotion
     )
 
     override fun getItemCount() = tasks.size
@@ -30,11 +32,12 @@ class TaskAdapter(
 
 interface TaskRecylerViewCallbacks {
 
-    fun onTaskSelected(taskId: UUID)
+    fun onTaskSelected(taskId: UUID, moveBack: Boolean)
 }
 
-class TaskHolder(view: View, val callbacks: TaskRecylerViewCallbacks?) :
-    RecyclerView.ViewHolder(view), View.OnClickListener {
+class TaskHolder(
+    view: View, val callbacks: List<TaskRecylerViewCallbacks>, val backMotion: Boolean
+) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
     private lateinit var task: Task
     private val titleTextView: TextView = itemView.findViewById(R.id.task_title)
@@ -58,6 +61,8 @@ class TaskHolder(view: View, val callbacks: TaskRecylerViewCallbacks?) :
     }
 
     override fun onClick(v: View?) {
-        callbacks?.onTaskSelected(task.id)
+        callbacks.forEach {
+            it.onTaskSelected(task.id, backMotion)
+        }
     }
 }

@@ -44,12 +44,17 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     private lateinit var addSubtaskButton: ImageButton
     private lateinit var subtaskRecyclerView: RecyclerView
 
-    private var subTaskAdapter = TaskAdapter(emptyList(), null)
+    private var subTaskAdapter = TaskAdapter(emptyList())
+
+    interface Callbacks {
+
+        fun onChildRequested(parent: UUID)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         subTaskAdapter.layoutInflater = layoutInflater
-        subTaskAdapter.callbacks = context as TaskRecylerViewCallbacks?
+        subTaskAdapter.callbacks = mutableListOf(context as TaskRecylerViewCallbacks)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,9 +130,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
         }
 
         addSubtaskButton.setOnClickListener {
-            val task = Task()
-            taskDetailViewModel.addSubtask(parent = this.task.parent, subtask = task)
-            subTaskAdapter.callbacks?.onTaskSelected(task.id)
+            (this@TaskDetailFragment.requireContext() as Callbacks?)?.onChildRequested(task.parent.id)
         }
     }
 
