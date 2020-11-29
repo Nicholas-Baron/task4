@@ -1,4 +1,4 @@
-package com.task4.task4
+package com.task4.task4.viewmodels
 
 import androidx.lifecycle.*
 import com.task4.task4.database.Task
@@ -7,9 +7,8 @@ import com.task4.task4.database.TaskRepository
 import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
-class AddSubtaskViewModel : ViewModel() {
+class AddSubtaskViewModel : BaseViewModel() {
 
-    private val taskRepository = TaskRepository.get()
     private val parentTaskIdLiveData = MutableLiveData<UUID>()
     val parentTaskLiveData: LiveData<Task?> =
         Transformations.switchMap(parentTaskIdLiveData) { taskid ->
@@ -45,7 +44,6 @@ class AddSubtaskViewModel : ViewModel() {
                 .map { taskRepository.getTaskWithSubtasks(it.parent.id) }
         }
 
-
     fun loadParentTask(taskId: UUID) {
         parentTaskIdLiveData.value = taskId
     }
@@ -57,20 +55,6 @@ class AddSubtaskViewModel : ViewModel() {
 
     fun linkTasks(parent: UUID, subtask: UUID) {
         taskRepository.linkTasks(parent, subtask)
-    }
-
-    fun saveTask(task: TaskWithSubTasks) {
-        taskRepository.update(task)
-    }
-
-    private class TripleTrigger<A, B, C>(a: LiveData<A>, b: LiveData<B>, c: LiveData<C>) :
-        MediatorLiveData<Triple<A?, B?, C?>>() {
-
-        init {
-            addSource(a) { value = Triple(it, b.value, c.value) }
-            addSource(b) { value = Triple(a.value, it, c.value) }
-            addSource(c) { value = Triple(a.value, b.value, it) }
-        }
     }
 
 }

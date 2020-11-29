@@ -1,4 +1,4 @@
-package com.task4.task4
+package com.task4.task4.viewmodels
 
 import androidx.lifecycle.*
 import com.task4.task4.database.Task
@@ -6,10 +6,8 @@ import com.task4.task4.database.TaskRepository
 import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
-class TaskDetailViewModel : ViewModel() {
+class TaskDetailViewModel : BaseViewModel() {
 
-
-    private val taskRepository = TaskRepository.get()
     private val taskIdLiveData = MutableLiveData<UUID>()
     val taskLiveData: LiveData<TaskWithSubTasks?> =
         Transformations.switchMap(taskIdLiveData) { taskId ->
@@ -32,27 +30,5 @@ class TaskDetailViewModel : ViewModel() {
 
     fun loadTask(taskId: UUID) {
         taskIdLiveData.value = taskId
-    }
-
-    fun saveTask(task: TaskWithSubTasks) {
-        taskRepository.update(task.parent)
-        for (subTask in task.subTasks) {
-            taskRepository.update(subTask)
-            taskRepository.linkTasks(task.parent.id, subTask.id)
-        }
-    }
-
-    fun addSubtask(parent: Task, subtask: Task) {
-        taskRepository.createTask(subtask)
-        taskRepository.linkTasks(parent.id, subtask.id)
-    }
-
-    private class DoubleTrigger<A, B>(a: LiveData<A>, b: LiveData<B>) :
-        MediatorLiveData<Pair<A?, B?>>() {
-
-        init {
-            addSource(a) { value = it to b.value }
-            addSource(b) { value = a.value to it }
-        }
     }
 }

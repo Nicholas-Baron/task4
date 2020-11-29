@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
 import com.task4.task4.database.TaskWithSubTasks
+import com.task4.task4.viewmodels.TaskListViewModel
 
 private const val TAG = "TaskListFragment"
 
@@ -77,11 +78,6 @@ class TaskListFragment : Fragment() {
             true
         }
         else          -> super.onOptionsItemSelected(item)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        //taskListViewModel.saveTasks(adapter.tasks)
     }
 
     private fun updateUI(tasks: List<LiveData<TaskWithSubTasks?>>) {
