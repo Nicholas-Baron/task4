@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
@@ -28,10 +29,12 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
 
     private val addSubtaskViewModel: AddSubtaskViewModel by viewModels()
 
-    private var existingTaskAdapter =
-        TaskAdapter(emptyList(), TaskRecylerViewSettings(backMotion = true, showCheckBox = false))
-
-    private var possibleChildrenTasks: List<TaskWithSubTasks> = emptyList()
+    private var existingTaskAdapter = TaskAdapter(
+        emptyList(),
+        TaskRecylerViewSettings(backMotion = true, showCheckBox = false, saveCallback = {
+            addSubtaskViewModel.saveTask(it)
+        })
+    )
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -66,8 +69,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
         }
         addSubtaskViewModel.possibleChildrenLiveData.observe(viewLifecycleOwner) {
             if (it != null) {
-                possibleChildrenTasks = it
-                updateUI()
+                updateUI(it)
             }
         }
     }
@@ -81,7 +83,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
         }
     }
 
-    private fun updateUI() {
+    private fun updateUI(possibleChildrenTasks: List<LiveData<TaskWithSubTasks?>>) {
         existingTaskAdapter.tasks = possibleChildrenTasks
         existingTaskRecyclerView.adapter = existingTaskAdapter
     }

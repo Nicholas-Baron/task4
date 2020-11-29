@@ -11,16 +11,16 @@ class AddSubtaskViewModel : ViewModel() {
 
     private val taskRepository = TaskRepository.get()
     private val parentTaskIdLiveData = MutableLiveData<UUID>()
-    var parentTaskLiveData: LiveData<Task?> =
+    val parentTaskLiveData: LiveData<Task?> =
         Transformations.switchMap(parentTaskIdLiveData) { taskid ->
             taskRepository.getTask(taskid)
         }
 
-    var crossRefLiveData: LiveData<List<TaskCrossRef>> = taskRepository.getTaskCrossRefs()
+    private val crossRefLiveData: LiveData<List<TaskCrossRef>> = taskRepository.getTaskCrossRefs()
 
-    var allTasks: LiveData<List<TaskWithSubTasks>> = taskRepository.getTasksWithSubtasks()
+    private val allTasks: LiveData<List<TaskWithSubTasks>> = taskRepository.getTasksWithSubtasks()
 
-    val possibleChildrenLiveData: LiveData<List<TaskWithSubTasks>> =
+    val possibleChildrenLiveData: LiveData<List<LiveData<TaskWithSubTasks?>>> =
         Transformations.map(TripleTrigger(parentTaskIdLiveData, crossRefLiveData, allTasks)) {
             val crossRefs = it.second ?: return@map emptyList()
             val parentTaskId = it.first ?: return@map emptyList()
@@ -42,6 +42,7 @@ class AddSubtaskViewModel : ViewModel() {
             }
 
             return@map allTasks.filter { it.parent.id !in lineage }
+                .map { taskRepository.getTaskWithSubtasks(it.parent.id) }
         }
 
 
@@ -56,6 +57,10 @@ class AddSubtaskViewModel : ViewModel() {
 
     fun linkTasks(parent: UUID, subtask: UUID) {
         taskRepository.linkTasks(parent, subtask)
+    }
+
+    fun saveTask(task: TaskWithSubTasks) {
+        taskRepository.update(task)
     }
 
     private class TripleTrigger<A, B, C>(a: LiveData<A>, b: LiveData<B>, c: LiveData<C>) :

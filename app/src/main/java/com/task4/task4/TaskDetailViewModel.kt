@@ -16,16 +16,18 @@ class TaskDetailViewModel : ViewModel() {
             taskRepository.getTaskWithSubtasks(taskId)
         }
 
-    private val subTaskLiveData = taskRepository.getTasksWithSubtasks()
+    private val subTaskLiveData = taskRepository.getTaskCrossRefs()
 
-    val liveSubTasksWithSubTasks: LiveData<List<TaskWithSubTasks>> =
+    val liveSubTasksWithSubTasks: LiveData<List<LiveData<TaskWithSubTasks?>>> =
         Transformations.map(DoubleTrigger(taskLiveData, subTaskLiveData)) {
             val directSubTasks = it.first?.subTasks ?: return@map emptyList()
             val allTasksWithSubTasks = it.second ?: return@map emptyList()
 
             val subTaskIds = directSubTasks.map { it.id }.toSet()
 
-            return@map allTasksWithSubTasks.filter { it.parent.id in subTaskIds }
+            return@map allTasksWithSubTasks.filter { it.parentId in subTaskIds }.map { crossRef ->
+                taskRepository.getTaskWithSubtasks(crossRef.childId)
+            }
         }
 
     fun loadTask(taskId: UUID) {

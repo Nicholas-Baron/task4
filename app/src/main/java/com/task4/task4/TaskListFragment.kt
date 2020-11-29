@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
@@ -18,11 +19,12 @@ class TaskListFragment : Fragment() {
     // the list of tasks presented to the user
     private lateinit var taskRecyclerView: RecyclerView
 
-    // adapts the list of tasks  from the database for the recycler view
-    private var adapter = TaskAdapter(emptyList())
-
     // preserve data across rotations lazy load it in
     private val taskListViewModel: TaskListViewModel by viewModels()
+
+    // adapts the list of tasks  from the database for the recycler view
+    private var adapter =
+        TaskAdapter(emptyList(), TaskRecylerViewSettings { taskListViewModel.saveTask(it) })
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,10 +81,10 @@ class TaskListFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        taskListViewModel.saveTasks(adapter.tasks)
+        //taskListViewModel.saveTasks(adapter.tasks)
     }
 
-    private fun updateUI(tasks: List<TaskWithSubTasks>) {
+    private fun updateUI(tasks: List<LiveData<TaskWithSubTasks?>>) {
         adapter.tasks = tasks
         taskRecyclerView.adapter = adapter
     }

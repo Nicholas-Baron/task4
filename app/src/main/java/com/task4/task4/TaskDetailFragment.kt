@@ -44,7 +44,8 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     private lateinit var addSubtaskButton: ImageButton
     private lateinit var subtaskRecyclerView: RecyclerView
 
-    private var subTaskAdapter = TaskAdapter(emptyList())
+    private var subTaskAdapter =
+        TaskAdapter(emptyList(), TaskRecylerViewSettings { taskDetailViewModel.saveTask(it) })
 
     interface Callbacks {
 
