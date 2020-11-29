@@ -25,8 +25,7 @@ class TaskListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        adapter.layoutInflater = layoutInflater
-        adapter.callbacks = mutableListOf(context as TaskRecylerViewCallbacks)
+        adapter.bind(layoutInflater, mutableListOf(context as TaskRecylerViewCallbacks))
     }
 
     override fun onCreateView(
@@ -54,7 +53,7 @@ class TaskListFragment : Fragment() {
     // remove the reference to the callback receiver
     override fun onDetach() {
         super.onDetach()
-        adapter.callbacks.clear()
+        adapter.clearCallbacks()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +70,7 @@ class TaskListFragment : Fragment() {
         R.id.new_task -> {
             val task = Task()
             taskListViewModel.addTask(task)
-            adapter.callbacks.forEach { it.onTaskSelected(task.id, false) }
+            adapter.triggerCallbacks(task.id)
             true
         }
         else          -> super.onOptionsItemSelected(item)

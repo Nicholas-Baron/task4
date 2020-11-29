@@ -53,8 +53,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        subTaskAdapter.layoutInflater = layoutInflater
-        subTaskAdapter.callbacks = mutableListOf(context as TaskRecylerViewCallbacks)
+        subTaskAdapter.bind(layoutInflater, mutableListOf(context as TaskRecylerViewCallbacks))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

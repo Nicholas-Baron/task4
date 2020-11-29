@@ -27,14 +27,18 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
 
     private val addSubtaskViewModel: AddSubtaskViewModel by viewModels()
 
-    private var existingTaskAdapter = TaskAdapter(emptyList(), backMotion = true)
+    private var existingTaskAdapter =
+        TaskAdapter(emptyList(), TaskRecylerViewSettings(backMotion = true, showCheckBox = false))
 
     private var possibleChildrenTasks: List<Task> = emptyList()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        existingTaskAdapter.layoutInflater = layoutInflater
-        existingTaskAdapter.callbacks = mutableListOf(context as TaskRecylerViewCallbacks, this)
+        existingTaskAdapter.bind(
+            layoutInflater, callbacks = mutableListOf(
+                context as TaskRecylerViewCallbacks, this
+            )
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +76,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
         createNewSubTask.setOnClickListener {
             val task = Task()
             addSubtaskViewModel.addSubtask(parentTask, subtask = task)
-            existingTaskAdapter.callbacks.forEach { it.onTaskSelected(task.id, false) }
+            existingTaskAdapter.triggerCallbacks(task.id, backMotion = false)
         }
     }
 

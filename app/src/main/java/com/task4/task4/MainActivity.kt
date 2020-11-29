@@ -26,11 +26,13 @@ class MainActivity : AppCompatActivity(), TaskRecylerViewCallbacks, TaskDetailFr
     }
 
     override fun onTaskSelected(taskId: UUID, moveBack: Boolean) {
-        if (!moveBack) {
+        if (moveBack) {
+            supportFragmentManager.popBackStackImmediate()
+        } else {
             val fragment = TaskDetailFragment.newInstance(taskId)
             supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                 .addToBackStack(null).commit()
-        } else supportFragmentManager.popBackStackImmediate()
+        }
     }
 
     override fun onChildRequested(parent: UUID) {

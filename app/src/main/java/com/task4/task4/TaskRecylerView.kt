@@ -5,27 +5,52 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
 import java.util.UUID
 
-class TaskAdapter(
-    var tasks: List<Task>,
+data class TaskRecylerViewSettings(
     var callbacks: MutableList<TaskRecylerViewCallbacks> = mutableListOf(),
-    val backMotion: Boolean = false
+    val backMotion: Boolean = false,
+    val showCheckBox: Boolean = true
+) {
+
+    fun triggerCallbacks(id: UUID, customBackMotion: Boolean? = null) {
+        callbacks.forEach {
+            it.onTaskSelected(id, customBackMotion ?: backMotion)
+        }
+    }
+}
+
+class TaskAdapter(
+    var tasks: List<Task>, val settings: TaskRecylerViewSettings = TaskRecylerViewSettings()
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
-    lateinit var layoutInflater: LayoutInflater
+    private lateinit var layoutInflater: LayoutInflater
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder = TaskHolder(
-        layoutInflater.inflate(R.layout.list_item_task, parent, false), callbacks, backMotion
+        layoutInflater.inflate(R.layout.list_item_task, parent, false), settings
     )
 
     override fun getItemCount() = tasks.size
 
     override fun onBindViewHolder(holder: TaskHolder, position: Int) {
         holder.bind(tasks[position])
+    }
+
+    fun clearCallbacks() {
+        settings.callbacks.clear()
+    }
+
+    fun triggerCallbacks(id: UUID, backMotion: Boolean? = null) {
+        settings.triggerCallbacks(id, backMotion)
+    }
+
+    fun bind(layoutInflater: LayoutInflater, callbacks: MutableList<TaskRecylerViewCallbacks>) {
+        this.layoutInflater = layoutInflater
+        settings.callbacks = callbacks
     }
 
 }
@@ -36,7 +61,7 @@ interface TaskRecylerViewCallbacks {
 }
 
 class TaskHolder(
-    view: View, val callbacks: List<TaskRecylerViewCallbacks>, val backMotion: Boolean
+    view: View, val settings: TaskRecylerViewSettings
 ) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
     private lateinit var task: Task
@@ -55,6 +80,7 @@ class TaskHolder(
                 setOnCheckedChangeListener { _, isChecked ->
                     this@TaskHolder.task.completed = isChecked
                 }
+                isVisible = settings.showCheckBox
             }
         }
     }
@@ -64,8 +90,6 @@ class TaskHolder(
     }
 
     override fun onClick(v: View?) {
-        callbacks.forEach {
-            it.onTaskSelected(task.id, backMotion)
-        }
+        settings.triggerCallbacks(task.id)
     }
 }
