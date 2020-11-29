@@ -19,7 +19,7 @@ import java.util.UUID
 
 private const val ARG_PARENT_ID = "parent_id"
 
-class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
+class AddSubtaskFragment : Fragment(), TaskRecyclerViewCallbacks {
 
 
     private lateinit var parentTask: Task
@@ -32,7 +32,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
 
     private var existingTaskAdapter = TaskAdapter(
         emptyList(),
-        TaskRecylerViewSettings(backMotion = true, showCheckBox = false, saveCallback = {
+        TaskRecyclerViewSettings(backMotion = true, showCheckBox = false, saveCallback = {
             addSubtaskViewModel.saveTask(it)
         })
     )
@@ -41,7 +41,7 @@ class AddSubtaskFragment : Fragment(), TaskRecylerViewCallbacks {
         super.onAttach(context)
         existingTaskAdapter.bind(
             layoutInflater, callbacks = mutableListOf(
-                context as TaskRecylerViewCallbacks, this
+                context as TaskRecyclerViewCallbacks, this
             )
         )
     }

@@ -25,11 +25,11 @@ class TaskListFragment : Fragment() {
 
     // adapts the list of tasks  from the database for the recycler view
     private var adapter =
-        TaskAdapter(emptyList(), TaskRecylerViewSettings { taskListViewModel.saveTask(it) })
+        TaskAdapter(emptyList(), TaskRecyclerViewSettings { taskListViewModel.saveTask(it) })
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        adapter.bind(layoutInflater, mutableListOf(context as TaskRecylerViewCallbacks))
+        adapter.bind(layoutInflater, mutableListOf(context as TaskRecyclerViewCallbacks))
     }
 
     override fun onCreateView(

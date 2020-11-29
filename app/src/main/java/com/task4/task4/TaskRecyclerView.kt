@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.TaskWithSubTasks
 import java.util.UUID
 
-data class TaskRecylerViewSettings(
-    var callbacks: MutableList<TaskRecylerViewCallbacks> = mutableListOf(),
+data class TaskRecyclerViewSettings(
+    var callbacks: MutableList<TaskRecyclerViewCallbacks> = mutableListOf(),
     val backMotion: Boolean = false,
     val showCheckBox: Boolean = true,
     val saveCallback: (TaskWithSubTasks) -> Unit
@@ -27,7 +27,7 @@ data class TaskRecylerViewSettings(
 }
 
 class TaskAdapter(
-    var tasks: List<LiveData<TaskWithSubTasks?>>, val settings: TaskRecylerViewSettings
+    var tasks: List<LiveData<TaskWithSubTasks?>>, val settings: TaskRecyclerViewSettings
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
@@ -51,19 +51,19 @@ class TaskAdapter(
         settings.triggerCallbacks(id, backMotion)
     }
 
-    fun bind(layoutInflater: LayoutInflater, callbacks: MutableList<TaskRecylerViewCallbacks>) {
+    fun bind(layoutInflater: LayoutInflater, callbacks: MutableList<TaskRecyclerViewCallbacks>) {
         this.layoutInflater = layoutInflater
         settings.callbacks = callbacks
     }
 }
 
-interface TaskRecylerViewCallbacks {
+interface TaskRecyclerViewCallbacks {
 
     fun onTaskSelected(taskId: UUID, moveBack: Boolean)
 }
 
 class TaskHolder(
-    view: View, val settings: TaskRecylerViewSettings
+    view: View, val settings: TaskRecyclerViewSettings
 ) : RecyclerView.ViewHolder(view), View.OnClickListener, Observer<TaskWithSubTasks?> {
 
     private lateinit var task: TaskWithSubTasks
