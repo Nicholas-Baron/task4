@@ -10,8 +10,8 @@ class AddSubtaskViewModel : BaseViewModel() {
 
     private val parentTaskIdLiveData = MutableLiveData<UUID>()
     val parentTaskLiveData: LiveData<Task?> =
-        Transformations.switchMap(parentTaskIdLiveData) { taskid ->
-            taskRepository.getTask(taskid)
+        Transformations.switchMap(parentTaskIdLiveData) { taskId ->
+            taskRepository.getTask(taskId)
         }
 
     private val crossRefLiveData: LiveData<List<TaskCrossRef>> = taskRepository.getTaskCrossRefs()
