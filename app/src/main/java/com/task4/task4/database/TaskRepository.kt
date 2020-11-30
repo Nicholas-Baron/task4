@@ -35,8 +35,25 @@ class TaskRepository private constructor(context: Context) {
 
     fun getTask(uuid: UUID): LiveData<Task?> = taskDAO.getTask(uuid)
 
+    fun getTaskCrossRefs(): LiveData<List<TaskCrossRef>> = taskDAO.getCrossRefs()
+
     fun update(task: Task) {
         executor.execute { taskDAO.updateTask(task) }
+    }
+
+    fun update(task: TaskWithSubTasks) {
+        executor.execute {
+            taskDAO.updateTask(task.parent)
+            task.subTasks.forEach { taskDAO.updateTask(it) }
+        }
+    }
+
+    fun linkTasks(parent: UUID, subtask: UUID) {
+        executor.execute {
+            taskDAO.insertCrossRef(
+                TaskCrossRef(parent, subtask)
+            )
+        }
     }
 
     companion object {
