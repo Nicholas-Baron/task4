@@ -26,6 +26,13 @@ class TaskRepository private constructor(context: Context) {
         executor.execute { taskDAO.createTask(task) }
     }
 
+    fun deleteTask(task: Task) {
+        executor.execute {
+            taskDAO.deleteTask(task)
+            taskDAO.deleteCrossRefs(task.id)
+        }
+    }
+
     fun getTasksWithSubtasks(): LiveData<List<TaskWithSubTasks>> = taskDAO.getTasksWithSubtasks()
 
     fun getTasks(): LiveData<List<Task>> = taskDAO.getTasks()
