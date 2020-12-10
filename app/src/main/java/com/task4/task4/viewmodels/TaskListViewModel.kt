@@ -12,4 +12,8 @@ class TaskListViewModel : BaseViewModel() {
     fun addTask(task: Task) {
         taskRepository.createTask(task)
     }
+
+    fun deleteTask(task : Task){
+        taskRepository.deleteTask(task)
+    }
 }

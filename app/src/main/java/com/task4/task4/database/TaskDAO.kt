@@ -27,9 +27,15 @@ interface TaskDAO {
     @Insert
     fun createTask(task: Task)
 
+    @Delete
+    fun deleteTask(task: Task)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertCrossRef(crossRef: TaskCrossRef)
 
     @Query("SELECT * FROM TaskCrossRef")
     fun getCrossRefs(): LiveData<List<TaskCrossRef>>
+
+    @Query("DELETE FROM TaskCrossRef WHERE parentId = (:id) OR childId = (:id)")
+    fun deleteCrossRefs(id : UUID)
 }
