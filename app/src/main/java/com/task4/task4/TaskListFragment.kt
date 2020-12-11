@@ -7,6 +7,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.task4.task4.database.Task
@@ -25,7 +26,7 @@ class TaskListFragment : Fragment() {
 
     // adapts the list of tasks  from the database for the recycler view
     private var adapter =
-        TaskAdapter(emptyList(), TaskRecyclerViewSettings { taskListViewModel.saveTask(it) })
+        TaskAdapter(mutableListOf(), TaskRecyclerViewSettings { taskListViewModel.saveTask(it) })
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -41,6 +42,16 @@ class TaskListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = adapter
         }
+        val swipeHandler = object : SwipeToDeleteCallback(requireContext()) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = taskRecyclerView.adapter as TaskAdapter
+                taskListViewModel.deleteTaskAt(viewHolder.adapterPosition)
+                adapter.removeAt(viewHolder.adapterPosition)
+
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeHandler)
+        itemTouchHelper.attachToRecyclerView(taskRecyclerView)
         return view
     }
 
@@ -63,6 +74,7 @@ class TaskListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -81,7 +93,7 @@ class TaskListFragment : Fragment() {
     }
 
     private fun updateUI(tasks: List<LiveData<TaskWithSubTasks?>>) {
-        adapter.tasks = tasks
+        adapter.tasks = tasks.toMutableList()
         taskRecyclerView.adapter = adapter
     }
 

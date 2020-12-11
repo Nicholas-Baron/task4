@@ -16,4 +16,10 @@ class TaskListViewModel : BaseViewModel() {
     fun deleteTask(task : Task){
         taskRepository.deleteTask(task)
     }
+
+    fun deleteTaskAt(position: Int) {
+        taskListLiveData?.value?.get(position)?.value?.parent?.let {
+            deleteTask(it)
+        }
+    }
 }
