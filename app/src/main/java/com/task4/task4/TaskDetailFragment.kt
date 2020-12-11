@@ -46,7 +46,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
     private lateinit var subtaskRecyclerView: RecyclerView
 
     private var subTaskAdapter =
-        TaskAdapter(emptyList(), TaskRecyclerViewSettings { taskDetailViewModel.saveTask(it) })
+        TaskAdapter(mutableListOf(), TaskRecyclerViewSettings { taskDetailViewModel.saveTask(it) })
 
     interface Callbacks {
 
@@ -94,7 +94,7 @@ class TaskDetailFragment : Fragment(), DatePickerFragment.Callbacks, TimePickerF
         }
         taskDetailViewModel.liveSubTasksWithSubTasks.observe(viewLifecycleOwner) {
             if (it != null) {
-                subTaskAdapter.tasks = it
+                subTaskAdapter.tasks = it.toMutableList()
                 subtaskRecyclerView.adapter = subTaskAdapter
             }
         }

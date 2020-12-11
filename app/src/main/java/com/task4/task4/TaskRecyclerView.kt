@@ -27,7 +27,7 @@ data class TaskRecyclerViewSettings(
 }
 
 class TaskAdapter(
-    var tasks: List<LiveData<TaskWithSubTasks?>>, private val settings: TaskRecyclerViewSettings
+    var tasks: MutableList<LiveData<TaskWithSubTasks?>>, private val settings: TaskRecyclerViewSettings
 ) : RecyclerView.Adapter<TaskHolder>() {
 
     // The layoutInflater is `lateinit` as it must be assigned in `onAttach`.
@@ -43,6 +43,10 @@ class TaskAdapter(
         tasks[position].observeForever(holder)
     }
 
+    fun removeAt(position: Int) {
+        tasks.removeAt(position)
+        notifyItemRemoved(position)
+    }
     fun clearCallbacks() {
         settings.callbacks.clear()
     }

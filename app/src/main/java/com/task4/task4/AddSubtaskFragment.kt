@@ -31,7 +31,7 @@ class AddSubtaskFragment : Fragment(), TaskRecyclerViewCallbacks {
     private val addSubtaskViewModel: AddSubtaskViewModel by viewModels()
 
     private var existingTaskAdapter = TaskAdapter(
-        emptyList(),
+        mutableListOf(),
         TaskRecyclerViewSettings(backMotion = true, showCheckBox = false, saveCallback = {
             addSubtaskViewModel.saveTask(it)
         })
@@ -85,7 +85,7 @@ class AddSubtaskFragment : Fragment(), TaskRecyclerViewCallbacks {
     }
 
     private fun updateUI(possibleChildrenTasks: List<LiveData<TaskWithSubTasks?>>) {
-        existingTaskAdapter.tasks = possibleChildrenTasks
+        existingTaskAdapter.tasks = possibleChildrenTasks.toMutableList()
         existingTaskRecyclerView.adapter = existingTaskAdapter
     }
 
